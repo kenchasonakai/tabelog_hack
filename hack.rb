@@ -10,11 +10,12 @@ class Tabelog
   load './capybara_register.rb'
 
   def find_store(area:, food:)
-    shop_name, place, ratio, holiday, shop_list = [".list-rst__rst-name", ".list-rst__area-genre", ".c-rating__val", ".list-rst__holiday-text", ".list-rst__wrap"]
+    shop_name, place, ratio, holiday, shop_list = [".list-rst__rst-name-target", ".list-rst__area-genre", ".c-rating__val", ".list-rst__holiday-text", ".list-rst__wrap"]
     visit "https://tabelog.com"
     find("input[id='sa']").set(area)
     find("input[id='sk']").set(food)
     find("#js-global-search-btn").click
+    find(".navi-rstlst__text--rank").click
     target_html_array = page.all(shop_list).map{ |element| Nokogiri::HTML.parse(element['innerHTML'], nil, 'utf-8') }
     shop_info_array = target_html_array.map { |html| {
       shop_name: get_info(html, shop_name),
@@ -42,4 +43,6 @@ class Tabelog
   end
 end
 
-#Tabelog.new.find_store(area: "志木", food: "焼肉")
+area = ARGV[0] || ""
+food = ARGV[1] || ""
+Tabelog.new.find_store(area: area, food: food)
